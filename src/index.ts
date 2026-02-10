@@ -52,6 +52,11 @@ export type {
 	TempoEndpointConfig,
 	ObservabilityStackConfig,
 	ObservabilityHealth,
+	TempoFingerprintRecord,
+	GeoLocation,
+	TempoTrace,
+	TempoSpan,
+	SpanAttribute,
 } from './types.js';
 
 // OTel Node SDK initialization
@@ -152,3 +157,37 @@ export {
 	getObservabilityConfig,
 	checkObservabilityHealth,
 } from './observability-config.js';
+
+// Tempo Query Services
+export type { TempoQueryServiceOptions } from './services/tempo-query.js';
+export { TempoQueryService, createTempoQueryService } from './services/tempo-query.js';
+
+export type { REDMetrics, TempoREDMetricsServiceOptions } from './services/tempo-red-metrics.js';
+export {
+	TempoREDMetricsService,
+	createTempoREDMetricsService,
+} from './services/tempo-red-metrics.js';
+
+export type {
+	QueryExecution,
+	QueryMetrics,
+	SlowQuery,
+	PerformanceSummary,
+	QueryPerformanceServiceOptions,
+} from './services/query-performance.js';
+export {
+	QueryPerformanceService,
+	createQueryPerformanceService,
+} from './services/query-performance.js';
+
+// Saved Queries
+export type { SavedQuery, SavedQueriesOptions } from './persistence/saved-queries.js';
+export {
+	loadSavedQueries,
+	saveQuery,
+	deleteQuery,
+	trackQueryUsage,
+	getQueriesByCategory,
+	getQueriesByUser,
+	updateQuery,
+} from './persistence/saved-queries.js';

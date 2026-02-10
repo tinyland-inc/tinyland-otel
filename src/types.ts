@@ -204,3 +204,144 @@ export interface ObservabilityHealth {
 	grafana: boolean;
 	prometheus: boolean;
 }
+
+// ============================================================================
+// Tempo Fingerprint Record types
+// ============================================================================
+
+/**
+ * Fingerprint record extracted from Tempo span attributes.
+ * Maps 1:1 with span attributes set by FingerprintEnrichmentService.
+ */
+export interface TempoFingerprintRecord {
+	// Trace context
+	traceID: string;
+	spanID: string;
+	timestamp: string; // ISO 8601
+	duration: number; // nanoseconds
+
+	// Core fingerprint (from span attributes)
+	fingerprintId: string; // fingerprint.id
+	fingerprintHash?: string; // fingerprint.hash
+	eventType: string; // fingerprint.event_type
+
+	// Session context
+	sessionId?: string; // session.id
+	userId?: string; // user.id
+	userHandle?: string; // user.handle
+	userRole?: string; // user.role
+
+	// GeoIP data
+	geoCountry?: string; // geo.country
+	geoCity?: string; // geo.city
+	geoLatitude?: number; // geo.latitude
+	geoLongitude?: number; // geo.longitude
+	geoSource?: string; // geo.method
+
+	// VPN detection
+	vpnDetected?: boolean; // vpn.detected
+	vpnProvider?: string; // vpn.provider
+	vpnConfidence?: string; // vpn.confidence
+	vpnMethod?: string; // vpn.method
+
+	// Device context
+	deviceType?: string; // device.type
+
+	// Browser/OS intelligence
+	browserName?: string; // browser.name
+	browserVersion?: string; // browser.version
+	browserMajorVersion?: string; // browser.major_version
+	osName?: string; // os.name
+	osVersion?: string; // os.version
+	engineName?: string; // engine.name
+	engineVersion?: string; // engine.version
+
+	// Navigation context
+	navigationPathname?: string; // navigation.pathname
+	navigationHostname?: string; // navigation.hostname
+	navigationCurrentUrl?: string; // navigation.current_url
+	navigationReferrer?: string; // navigation.referrer
+	navigationReferrerHostname?: string; // navigation.referrer_hostname
+	navigationIsExternalReferral?: boolean; // navigation.is_external_referral
+
+	// Risk scoring
+	riskScore?: number; // risk.score
+	riskTier?: string; // risk.tier
+	riskFactors?: string[]; // risk.factors
+
+	// IP context (hashed only in Tempo)
+	ipHash?: string; // ip.hash
+	ipType?: 'private' | 'public' | 'unknown'; // ip.type
+
+	// Consent data
+	consentTimestamp?: string; // consent.timestamp
+	consentVersion?: string; // consent.version
+	consentCategoriesEssential?: boolean | string;
+	consentCategoriesPreferences?: boolean | string;
+	consentCategoriesFunctional?: boolean | string;
+	consentCategoriesTracking?: boolean | string;
+	consentCategoriesPerformance?: boolean | string;
+	consentPreciseLocation?: boolean | string;
+	consentAgeVerified?: boolean | string;
+	consentOptionalHandle?: string;
+
+	// User preferences
+	preferencesTheme?: string; // preferences.theme
+	preferencesDarkMode?: string; // preferences.darkMode
+}
+
+// ============================================================================
+// Geo / Span Reader types
+// ============================================================================
+
+/**
+ * Geographic location extracted from a Tempo span
+ */
+export interface GeoLocation {
+	country: string;
+	countryCode?: string;
+	city: string | null;
+	latitude: number | null;
+	longitude: number | null;
+	timezone?: string | null;
+	source: 'parent-span' | 'child-span';
+}
+
+/**
+ * Tempo trace structure (from /api/search response)
+ */
+export interface TempoTrace {
+	traceID: string;
+	rootServiceName?: string;
+	rootTraceName?: string;
+	startTimeUnixNano?: string;
+	durationMs?: number;
+	spanSet?: {
+		spans: TempoSpan[];
+		matched: number;
+	};
+}
+
+/**
+ * Tempo span with attributes (from search response)
+ */
+export interface TempoSpan {
+	spanID: string;
+	name?: string;
+	startTimeUnixNano: string;
+	durationNanos: string;
+	attributes: SpanAttribute[];
+}
+
+/**
+ * Span attribute (key-value pair)
+ */
+export interface SpanAttribute {
+	key: string;
+	value: {
+		stringValue?: string;
+		intValue?: string | number;
+		doubleValue?: number;
+		boolValue?: boolean;
+	};
+}
