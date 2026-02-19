@@ -126,7 +126,8 @@ export function initializeServerTracing(): unknown {
 	const serviceVersion = getServiceVersion();
 	const deploymentEnv = getDeploymentEnv();
 	const otlpEndpoint = getOtlpEndpoint();
-	const _samplingRatio = getSamplingRatio();
+	// Sampling ratio retrieved for future use in trace sampler configuration
+	void getSamplingRatio();
 
 	try {
 		// Set environment variables for NodeSDK auto-configuration
