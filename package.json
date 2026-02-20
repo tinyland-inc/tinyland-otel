@@ -1,5 +1,5 @@
 {
-  "name": "@tinyland-inc/tinyland-otel",
+  "name": "@tummycrypt/tinyland-otel",
   "version": "0.1.0",
   "description": "OpenTelemetry instrumentation layer: tracer factory, span helpers, TraceQL query builder, RED metrics, Tempo query service, and file-based observability logging",
   "type": "module",
@@ -68,5 +68,9 @@
   },
   "engines": {
     "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

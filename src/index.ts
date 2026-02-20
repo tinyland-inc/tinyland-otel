@@ -1,5 +1,5 @@
 /**
- * @tinyland-inc/tinyland-otel
+ * @tummycrypt/tinyland-otel
  *
  * OpenTelemetry instrumentation layer for the Tinyland.dev platform.
  * Provides tracer factory, span helpers, TraceQL query builder,
@@ -7,7 +7,7 @@
  *
  * Usage:
  * ```typescript
- * import { configureOtel, initializeServerTracing, getServerTracer, createSpan } from '@tinyland-inc/tinyland-otel';
+ * import { configureOtel, initializeServerTracing, getServerTracer, createSpan } from '@tummycrypt/tinyland-otel';
  *
  * // Initialize once at startup
  * configureOtel({
@@ -30,7 +30,7 @@
  * });
  * ```
  *
- * @module @tinyland-inc/tinyland-otel
+ * @module @tummycrypt/tinyland-otel
  */
 
 // Configuration

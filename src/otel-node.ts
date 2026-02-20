@@ -104,7 +104,7 @@ let sdk: unknown | null = null;
  *
  * @example
  * ```typescript
- * import { configureOtel, initializeServerTracing } from '@tinyland-inc/tinyland-otel';
+ * import { configureOtel, initializeServerTracing } from '@tummycrypt/tinyland-otel';
  *
  * configureOtel({
  *   config: {

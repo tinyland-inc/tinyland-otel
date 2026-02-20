@@ -47,7 +47,7 @@ export function getTracerVersion(): string {
  *
  * @example
  * ```typescript
- * import { getServerTracer } from '@tinyland-inc/tinyland-otel';
+ * import { getServerTracer } from '@tummycrypt/tinyland-otel';
  *
  * const tracer = getServerTracer();
  * const span = tracer.startSpan('http.request');

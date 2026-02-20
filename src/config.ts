@@ -1,12 +1,12 @@
 /**
- * Global configuration for @tinyland-inc/tinyland-otel
+ * Global configuration for @tummycrypt/tinyland-otel
  *
  * Provides a singleton configuration store that replaces
  * SvelteKit's $env/dynamic/private and $lib/server imports.
  *
  * Usage:
  * ```typescript
- * import { configureOtel } from '@tinyland-inc/tinyland-otel';
+ * import { configureOtel } from '@tummycrypt/tinyland-otel';
  *
  * configureOtel({
  *   config: {

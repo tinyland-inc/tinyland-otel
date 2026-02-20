@@ -1,5 +1,5 @@
 /**
- * Type definitions for @tinyland-inc/tinyland-otel
+ * Type definitions for @tummycrypt/tinyland-otel
  *
  * @module types
  */
