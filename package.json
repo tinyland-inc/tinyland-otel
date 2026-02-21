@@ -1,0 +1,75 @@
+{
+  "name": "@tinyland-inc/tinyland-otel",
+  "version": "0.1.0",
+  "description": "OpenTelemetry instrumentation layer: tracer factory, span helpers, TraceQL query builder, RED metrics, Tempo query service, and file-based observability logging",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "opentelemetry",
+    "tracing",
+    "observability",
+    "tempo",
+    "traceql",
+    "red-metrics",
+    "spans",
+    "instrumentation",
+    "grafana"
+  ],
+  "author": "Tinyland.dev",
+  "license": "Zlib AND LicenseRef-Tinyland-Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tinyland-inc/tinyland-otel.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.67.0",
+    "@opentelemetry/sdk-node": "^0.209.0",
+    "@pyroscope/nodejs": "^0.4.0"
+  },
+  "peerDependenciesMeta": {
+    "@opentelemetry/auto-instrumentations-node": {
+      "optional": true
+    },
+    "@opentelemetry/sdk-node": {
+      "optional": true
+    },
+    "@pyroscope/nodejs": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  }
+}
