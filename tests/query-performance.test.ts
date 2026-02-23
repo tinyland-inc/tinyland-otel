@@ -1,11 +1,11 @@
-/**
- * Tests for QueryPerformanceService
- */
+
+
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { QueryPerformanceService } from '../src/services/query-performance.js';
 import { resetOtelConfig } from '../src/config.js';
 
-// Mock fs module
+
 vi.mock('node:fs', () => ({
 	writeFileSync: vi.fn(),
 	readFileSync: vi.fn(),
@@ -83,7 +83,7 @@ describe('QueryPerformanceService', () => {
 
 			const executions = svc.getExecutions();
 			expect(executions).toHaveLength(3);
-			// Oldest entries should be evicted
+			
 			expect(executions[0].query).toBe('query_2');
 			expect(executions[2].query).toBe('query_4');
 		});
@@ -114,29 +114,29 @@ describe('QueryPerformanceService', () => {
 		});
 
 		it('should calculate latency percentiles', () => {
-			// Add 100 executions with known latencies
+			
 			for (let i = 1; i <= 100; i++) {
 				service.recordQueryExecution(createExecution(`q_${i}`, i * 10));
 			}
 
 			const metrics = service.getMetrics();
-			// p50 should be around 500ms (50th value)
+			
 			expect(metrics.p50LatencyMs).toBeGreaterThan(400);
 			expect(metrics.p50LatencyMs).toBeLessThan(600);
 
-			// p95 should be around 950ms
+			
 			expect(metrics.p95LatencyMs).toBeGreaterThan(900);
 			expect(metrics.p95LatencyMs).toBeLessThan(1000);
 
-			// p99 should be around 990ms
+			
 			expect(metrics.p99LatencyMs).toBeGreaterThan(950);
 			expect(metrics.p99LatencyMs).toBeLessThan(1010);
 		});
 
 		it('should count slow queries', () => {
 			service.recordQueryExecution(createExecution('q1', 500));
-			service.recordQueryExecution(createExecution('q2', 1500)); // slow
-			service.recordQueryExecution(createExecution('q3', 2000)); // slow
+			service.recordQueryExecution(createExecution('q2', 1500)); 
+			service.recordQueryExecution(createExecution('q3', 2000)); 
 			service.recordQueryExecution(createExecution('q4', 100));
 
 			const metrics = service.getMetrics();
@@ -192,7 +192,7 @@ describe('QueryPerformanceService', () => {
 
 			const slowQueries = service.getSlowQueries();
 			expect(slowQueries).toHaveLength(2);
-			// Sorted by avg execution time descending
+			
 			expect(slowQueries[0].query).toBe('slower');
 			expect(slowQueries[1].query).toBe('slow');
 		});
@@ -257,13 +257,13 @@ describe('QueryPerformanceService', () => {
 		it('should interpolate between values', () => {
 			const values = [10, 20, 30, 40, 50];
 			const p50 = service.calculatePercentile(values, 50);
-			expect(p50).toBe(30); // Middle value
+			expect(p50).toBe(30); 
 		});
 
 		it('should handle edge percentiles', () => {
 			const values = [10, 20, 30, 40, 50];
-			expect(service.calculatePercentile(values, 0)).toBe(10); // First value
-			expect(service.calculatePercentile(values, 100)).toBe(50); // Last value
+			expect(service.calculatePercentile(values, 0)).toBe(10); 
+			expect(service.calculatePercentile(values, 100)).toBe(50); 
 		});
 	});
 

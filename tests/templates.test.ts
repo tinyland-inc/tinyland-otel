@@ -1,6 +1,6 @@
-/**
- * Tests for TraceQL template rendering and validation
- */
+
+
+
 import { describe, it, expect } from 'vitest';
 import {
 	TRACEQL_TEMPLATES,

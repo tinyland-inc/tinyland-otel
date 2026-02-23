@@ -1,9 +1,9 @@
-/**
- * Tests for tracer factory and instrumentation helpers
- */
+
+
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-// Mock @opentelemetry/api before importing modules
+
 vi.mock('@opentelemetry/api', () => {
 	const mockSpan = {
 		setAttribute: vi.fn(),

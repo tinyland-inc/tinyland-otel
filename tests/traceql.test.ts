@@ -1,6 +1,6 @@
-/**
- * Tests for TraceQL query builder
- */
+
+
+
 import { describe, it, expect } from 'vitest';
 import { TraceQL } from '../src/traceql.js';
 

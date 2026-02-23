@@ -1,12 +1,12 @@
-/**
- * Tests for TempoQueryService
- */
+
+
+
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { TempoQueryService } from '../src/services/tempo-query.js';
 import { resetOtelConfig } from '../src/config.js';
 import type { OTLPTraceResponse, TempoSearchResponse } from '../src/types.js';
 
-// Mock global fetch
+
 const mockFetch = vi.fn() as Mock;
 vi.stubGlobal('fetch', mockFetch);
 
@@ -271,15 +271,15 @@ describe('TempoQueryService', () => {
 				json: () => Promise.resolve(mockTrace),
 			});
 
-			// First call - fetches
+			
 			const result1 = await service.fetchFullTrace('trace-cached');
 			expect(result1).toEqual(mockTrace);
 
-			// Second call - should use cache
+			
 			const result2 = await service.fetchFullTrace('trace-cached');
 			expect(result2).toEqual(mockTrace);
 
-			// Only one fetch should have occurred
+			
 			expect(mockFetch).toHaveBeenCalledOnce();
 		});
 	});

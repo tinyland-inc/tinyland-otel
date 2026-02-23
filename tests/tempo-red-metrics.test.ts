@@ -1,11 +1,11 @@
-/**
- * Tests for TempoREDMetricsService
- */
+
+
+
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { TempoREDMetricsService } from '../src/services/tempo-red-metrics.js';
 import { resetOtelConfig } from '../src/config.js';
 
-// Mock global fetch
+
 const mockFetch = vi.fn() as Mock;
 vi.stubGlobal('fetch', mockFetch);
 
@@ -173,7 +173,7 @@ describe('TempoREDMetricsService', () => {
 
 	describe('getREDMetrics', () => {
 		it('should return RED metrics with all fields', async () => {
-			// Mock 5 parallel queries (rate, error, p50, p95, p99)
+			
 			const rateData = createMockPrometheusResult([
 				[1700000000, '2.5'],
 				[1700000060, '3.0'],
@@ -199,7 +199,7 @@ describe('TempoREDMetricsService', () => {
 				[1700000060, '0.6'],
 			]);
 
-			// rate, error, total (from errorRate), p50, p95, p99 - 6 fetches total
+			
 			mockFetch
 				.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(rateData) })
 				.mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(errorData) })
@@ -232,7 +232,7 @@ describe('TempoREDMetricsService', () => {
 
 	describe('getFingerprintREDMetrics', () => {
 		it('should query fingerprint.enrichment span', async () => {
-			// All parallel queries return empty
+			
 			for (let i = 0; i < 6; i++) {
 				mockFetch.mockResolvedValueOnce({
 					ok: true,

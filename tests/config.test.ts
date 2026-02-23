@@ -1,6 +1,6 @@
-/**
- * Tests for configuration injection and defaults
- */
+
+
+
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
 	configureOtel,

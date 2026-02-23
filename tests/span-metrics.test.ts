@@ -1,6 +1,6 @@
-/**
- * Tests for RED metrics PromQL query builders
- */
+
+
+
 import { describe, it, expect } from 'vitest';
 import {
 	buildRateQuery,

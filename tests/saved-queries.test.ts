@@ -1,10 +1,10 @@
-/**
- * Tests for saved queries persistence
- */
+
+
+
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { resetOtelConfig } from '../src/config.js';
 
-// Mock fs module before importing the module under test
+
 const mockWriteFileSync = vi.fn();
 const mockReadFileSync = vi.fn() as Mock;
 const mockExistsSync = vi.fn() as Mock;
@@ -59,11 +59,11 @@ describe('Saved Queries Persistence', () => {
 
 	describe('loadSavedQueries', () => {
 		it('should return empty array when file does not exist', () => {
-			// First call: dir check, second call: file check
+			
 			mockExistsSync.mockReturnValueOnce(true).mockReturnValueOnce(false);
-			// After creating the file, read it
+			
 			mockReadFileSync.mockReturnValueOnce('[]');
-			// The ensureStorage creates the file, then we re-enter and read
+			
 			mockExistsSync.mockReturnValueOnce(true).mockReturnValueOnce(true);
 			mockReadFileSync.mockReturnValueOnce('[]');
 
@@ -98,10 +98,10 @@ describe('Saved Queries Persistence', () => {
 
 		it('should create directory if it does not exist', () => {
 			mockExistsSync
-				.mockReturnValueOnce(false) // dir does not exist
-				.mockReturnValueOnce(false); // file does not exist
+				.mockReturnValueOnce(false) 
+				.mockReturnValueOnce(false); 
 			mockReadFileSync.mockReturnValue('[]');
-			// After ensureStorage, re-check succeeds
+			
 			mockExistsSync.mockReturnValue(true);
 
 			loadSavedQueries(TEST_OPTIONS);
@@ -150,7 +150,7 @@ describe('Saved Queries Persistence', () => {
 				TEST_OPTIONS
 			);
 
-			// Verify the written data contains both queries
+			
 			const writtenData = JSON.parse(mockWriteFileSync.mock.calls[0][1] as string);
 			expect(writtenData).toHaveLength(2);
 		});
@@ -244,7 +244,7 @@ describe('Saved Queries Persistence', () => {
 				throw new Error('Write failure');
 			});
 
-			// trackQueryUsage is non-critical - should not throw
+			
 			expect(() => trackQueryUsage('tracked', TEST_OPTIONS)).not.toThrow();
 		});
 	});
