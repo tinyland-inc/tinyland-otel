@@ -1,15 +1,15 @@
-/**
- * TraceQL Query Templates
- *
- * Pre-built TraceQL query patterns for common tracing scenarios.
- * Supports template variables for parameterization.
- *
- * @module traceql-templates
- */
 
-/**
- * Template variable definition
- */
+
+
+
+
+
+
+
+
+
+
+
 export interface TemplateVariable {
 	name: string;
 	type: 'string' | 'number' | 'duration';
@@ -20,9 +20,9 @@ export interface TemplateVariable {
 	placeholder?: string;
 }
 
-/**
- * TraceQL template structure
- */
+
+
+
 export interface TraceQLTemplate {
 	id: string;
 	name: string;
@@ -37,11 +37,11 @@ export interface TraceQLTemplate {
 	}>;
 }
 
-/**
- * Pre-built TraceQL templates organized by category
- */
+
+
+
 export const TRACEQL_TEMPLATES: TraceQLTemplate[] = [
-	// SECURITY
+	
 	{
 		id: 'security.high_risk_sessions',
 		name: 'High-Risk Sessions',
@@ -98,7 +98,7 @@ export const TRACEQL_TEMPLATES: TraceQLTemplate[] = [
 		}],
 	},
 
-	// PERFORMANCE
+	
 	{
 		id: 'performance.slow_trpc_mutations',
 		name: 'Slow tRPC Mutations',
@@ -142,7 +142,7 @@ export const TRACEQL_TEMPLATES: TraceQLTemplate[] = [
 		}],
 	},
 
-	// ACCESSIBILITY
+	
 	{
 		id: 'a11y.critical_wcag_violations',
 		name: 'Critical WCAG Violations',
@@ -172,7 +172,7 @@ export const TRACEQL_TEMPLATES: TraceQLTemplate[] = [
 		query: '{ name="fingerprint.enrichment" && span.a11y.prefers_reduced_motion=true } | select(span.fingerprint.id, span.a11y.animation_disabled, span.theme.current)',
 	},
 
-	// TRPC
+	
 	{
 		id: 'trpc.procedure_call_distribution',
 		name: 'Procedure Call Distribution',
@@ -202,7 +202,7 @@ export const TRACEQL_TEMPLATES: TraceQLTemplate[] = [
 		}],
 	},
 
-	// DEBUGGING
+	
 	{
 		id: 'debugging.trace_by_fingerprint',
 		name: 'Trace by Fingerprint ID',
@@ -257,14 +257,14 @@ export const TRACEQL_TEMPLATES: TraceQLTemplate[] = [
 	}
 ];
 
-/**
- * Template categories for filtering
- */
+
+
+
 export const TEMPLATE_CATEGORIES = ['security', 'performance', 'a11y', 'trpc', 'debugging'] as const;
 
-/**
- * Replace template variables with actual values
- */
+
+
+
 export function renderTemplate(
 	template: TraceQLTemplate,
 	variables: Record<string, unknown>
@@ -309,25 +309,25 @@ function formatVariableValue(value: unknown, type?: TemplateVariable['type']): s
 	return String(value);
 }
 
-/**
- * Get templates by category
- */
+
+
+
 export function getTemplatesByCategory(
 	category: TraceQLTemplate['category']
 ): TraceQLTemplate[] {
 	return TRACEQL_TEMPLATES.filter(t => t.category === category);
 }
 
-/**
- * Get template by ID
- */
+
+
+
 export function getTemplateById(id: string): TraceQLTemplate | undefined {
 	return TRACEQL_TEMPLATES.find(t => t.id === id);
 }
 
-/**
- * List all template IDs grouped by category
- */
+
+
+
 export function getTemplateCatalog(): Record<TraceQLTemplate['category'], string[]> {
 	return TEMPLATE_CATEGORIES.reduce((catalog, category) => {
 		catalog[category] = getTemplatesByCategory(category).map(t => t.id);
@@ -335,9 +335,9 @@ export function getTemplateCatalog(): Record<TraceQLTemplate['category'], string
 	}, {} as Record<TraceQLTemplate['category'], string[]>);
 }
 
-/**
- * Validate template variable types
- */
+
+
+
 export function validateTemplateVariables(
 	template: TraceQLTemplate,
 	variables: Record<string, unknown>

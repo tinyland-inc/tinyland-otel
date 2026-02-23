@@ -1,22 +1,22 @@
-/**
- * Tempo Query Service
- *
- * Primary data source for fingerprint intelligence and distributed tracing.
- * Queries Tempo's search API to extract span attributes from fingerprint.enrichment traces.
- *
- * Architecture:
- * - FingerprintEnrichmentService writes spans with rich attributes to Tempo
- * - This service reads those spans via Tempo's search API
- * - Loki is now a FALLBACK data source (via FingerprintDataService)
- *
- * Tempo Search API endpoints:
- * - GET /api/search - Query traces by tags (e.g., fingerprint.id, user.id, geo.city)
- * - GET /api/traces/{traceID} - Get full trace details
- * - GET /api/search/tags - Get available span attribute keys
- * - GET /api/search/tag/{tagName}/values - Get values for a tag
- *
- * @module tempo-query
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { getLogger } from '../config.js';
 import { getObservabilityConfig } from '../observability-config.js';
@@ -27,35 +27,35 @@ import type {
 	TempoFingerprintRecord,
 } from '../types.js';
 
-/**
- * Options for configuring the TempoQueryService
- */
+
+
+
 export interface TempoQueryServiceOptions {
-	/** Tempo base URL (default: auto-detected from observability config) */
+	
 	tempoUrl?: string;
-	/** LRU cache TTL in milliseconds (default: 60000 = 1 minute) */
+	
 	cacheTtlMs?: number;
-	/** Maximum cache entries (default: 500) */
+	
 	maxCacheSize?: number;
-	/** Fetch timeout in milliseconds (default: 5000) */
+	
 	fetchTimeoutMs?: number;
-	/** Batch size for concurrent trace fetches (default: 5) */
+	
 	batchSize?: number;
 }
 
-/**
- * Service for querying Tempo traces with fingerprint enrichment data
- *
- * **Architecture Note**:
- * - Tempo /api/search returns minimal trace metadata (no span attributes)
- * - TraceQL select() operator NOT supported in search API responses
- * - Solution: Fetch full traces via /api/traces/{traceID} to get attributes
- * - Uses bounded concurrency to optimize performance
- */
+
+
+
+
+
+
+
+
+
 export class TempoQueryService {
 	private tempoUrl: string;
 
-	// LRU-style trace cache to prevent duplicate fetches (reduces 429 errors)
+	
 	private traceCache = new Map<string, { data: OTLPTraceResponse; timestamp: number }>();
 	private readonly cacheTtlMs: number;
 	private readonly maxCacheSize: number;
@@ -71,9 +71,9 @@ export class TempoQueryService {
 		this.batchSize = options.batchSize ?? 5;
 	}
 
-	/**
-	 * Clear stale entries from trace cache
-	 */
+	
+
+
 	private pruneTraceCache(): void {
 		const now = Date.now();
 		for (const [key, entry] of this.traceCache) {
@@ -81,35 +81,35 @@ export class TempoQueryService {
 				this.traceCache.delete(key);
 			}
 		}
-		// Evict oldest entries if over max size
+		
 		while (this.traceCache.size > this.maxCacheSize) {
 			const firstKey = this.traceCache.keys().next().value;
 			if (firstKey) this.traceCache.delete(firstKey);
 		}
 	}
 
-	/**
-	 * Get the current cache size (for testing/monitoring)
-	 */
+	
+
+
 	getCacheSize(): number {
 		return this.traceCache.size;
 	}
 
-	/**
-	 * Clear the trace cache
-	 */
+	
+
+
 	clearCache(): void {
 		this.traceCache.clear();
 	}
 
-	/**
-	 * Query Tempo for fingerprint traces
-	 *
-	 * @param timeRange - Time range string (e.g., "7d", "24h", "1h")
-	 * @param tags - Tag filters (e.g., \{ "fingerprint.id": "abc123" \})
-	 * @param limit - Max results (default 1000)
-	 * @returns Array of fingerprint records extracted from spans
-	 */
+	
+
+
+
+
+
+
+
 	async queryFingerprints(
 		timeRange: string = '7d',
 		tags: Record<string, string> = {},
@@ -156,16 +156,16 @@ export class TempoQueryService {
 		}
 	}
 
-	/**
-	 * Get autocomplete suggestions for a tag value
-	 *
-	 * Uses Tempo's `/api/search/tag/{tagName}/values?q={query}` endpoint for fast prefix search
-	 *
-	 * @param tagName - Tempo span attribute tag name (e.g., "fingerprint.id")
-	 * @param query - Prefix query string (e.g., "abc")
-	 * @param limit - Max results to return (default: 10)
-	 * @returns Array of matching tag values sorted by frequency
-	 */
+	
+
+
+
+
+
+
+
+
+
 	async getTagValueSuggestions(
 		tagName: string,
 		query: string,
@@ -220,22 +220,22 @@ export class TempoQueryService {
 		}
 	}
 
-	/**
-	 * Fetch full trace with all span attributes (OTLP format)
-	 *
-	 * @param traceID - Trace ID from search results
-	 * @returns Full OTLP trace or null if fetch fails
-	 */
+	
+
+
+
+
+
 	async fetchFullTrace(traceID: string): Promise<OTLPTraceResponse | null> {
 		const logger = getLogger();
 
-		// Check cache first
+		
 		const cached = this.traceCache.get(traceID);
 		if (cached && Date.now() - cached.timestamp < this.cacheTtlMs) {
 			return cached.data;
 		}
 
-		// Prune stale entries periodically
+		
 		if (this.traceCache.size > this.maxCacheSize / 2) {
 			this.pruneTraceCache();
 		}
@@ -274,14 +274,14 @@ export class TempoQueryService {
 		}
 	}
 
-	/**
-	 * Extract fingerprint record from OTLP trace format
-	 *
-	 * Parses OTLP attribute structure and finds span with name="fingerprint.enrichment"
-	 *
-	 * @param fullTrace - Full OTLP trace from /api/traces/{traceID}
-	 * @returns Fingerprint record or null if no fingerprint span found
-	 */
+	
+
+
+
+
+
+
+
 	extractFingerprintFromOTLP(fullTrace: OTLPTraceResponse): TempoFingerprintRecord | null {
 		for (const batch of fullTrace.batches || []) {
 			for (const scopeSpan of batch.scopeSpans || []) {
@@ -359,9 +359,9 @@ export class TempoQueryService {
 		return null;
 	}
 
-	/**
-	 * Call Tempo search API
-	 */
+	
+
+
 	async searchTracesWithQuery(query: TempoSearchQuery): Promise<TempoSearchResponse> {
 		const logger = getLogger();
 		const params = new URLSearchParams();
@@ -405,11 +405,11 @@ export class TempoQueryService {
 		}
 	}
 
-	/**
-	 * Extract fingerprint records from Tempo search response
-	 *
-	 * Fetches full OTLP traces via /api/traces/{traceID} with bounded concurrency.
-	 */
+	
+
+
+
+
 	private async extractFingerprintRecords(
 		response: TempoSearchResponse
 	): Promise<TempoFingerprintRecord[]> {
@@ -457,14 +457,14 @@ export class TempoQueryService {
 		return records;
 	}
 
-	/**
-	 * Search traces using TraceQL query syntax and enrich with full span attributes
-	 *
-	 * @param traceQL - TraceQL query string
-	 * @param start - Unix timestamp (seconds)
-	 * @param end - Unix timestamp (seconds)
-	 * @returns Enriched traces with span attributes populated
-	 */
+	
+
+
+
+
+
+
+
 	async searchTraces(
 		traceQL: string,
 		start: number,
@@ -524,9 +524,9 @@ export class TempoQueryService {
 		}
 	}
 
-	/**
-	 * Enrich minimal search traces with full span attributes from OTLP traces
-	 */
+	
+
+
 	private async enrichTracesWithAttributes(
 		traces: TempoSearchResponse['traces'],
 		spanName?: string
@@ -542,7 +542,7 @@ export class TempoQueryService {
 				batch.map((trace) => this.fetchFullTrace(trace.traceID))
 			);
 
-			// Rate limiting: Small delay between batches
+			
 			if (i + this.batchSize < traces.length) {
 				await new Promise((resolve) => setTimeout(resolve, 50));
 			}
@@ -569,9 +569,9 @@ export class TempoQueryService {
 		return enrichedTraces;
 	}
 
-	/**
-	 * Extract span attributes from OTLP trace in TempoSearchResponse format
-	 */
+	
+
+
 	private extractAttributesFromOTLP(
 		fullTrace: OTLPTraceResponse,
 		spanName?: string
@@ -610,9 +610,9 @@ export class TempoQueryService {
 		return undefined;
 	}
 
-	/**
-	 * Parse span attributes to key-value map
-	 */
+	
+
+
 	parseSpanAttributes(
 		attributes: Array<{
 			key: string;
@@ -641,9 +641,9 @@ export class TempoQueryService {
 		return attrs;
 	}
 
-	/**
-	 * Parse time range string to Unix timestamps
-	 */
+	
+
+
 	parseTimeRange(timeRange: string): { start: number; end: number } {
 		const end = Math.floor(Date.now() / 1000);
 		let start = end;
@@ -670,12 +670,12 @@ export class TempoQueryService {
 	}
 }
 
-/**
- * Create a new TempoQueryService instance with the given options.
- *
- * @param options - Service configuration options
- * @returns Configured TempoQueryService instance
- */
+
+
+
+
+
+
 export function createTempoQueryService(
 	options: TempoQueryServiceOptions = {}
 ): TempoQueryService {

@@ -1,138 +1,138 @@
-/**
- * Query Performance Monitoring Service
- *
- * Tracks TraceQL query execution metrics, identifies slow queries,
- * and provides performance insights for optimization.
- *
- * Features:
- * - In-memory storage with file persistence
- * - Rolling window (configurable, default last 1000 executions)
- * - Percentile calculations (p50, p95, p99)
- * - Slow query detection
- * - Query deduplication via MD5 hashing
- *
- * @module query-performance
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { createHash } from 'node:crypto';
 import { writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { getLogger } from '../config.js';
 
-/**
- * Default slow query threshold in milliseconds
- */
+
+
+
 const DEFAULT_SLOW_THRESHOLD_MS = 1000;
 
-/**
- * Individual query execution record
- */
+
+
+
 export interface QueryExecution {
-	/** MD5 hash of query text for deduplication */
+	
 	queryHash: string;
-	/** Original TraceQL query string */
+	
 	query: string;
-	/** Execution time in milliseconds */
+	
 	executionTimeMs: number;
-	/** Number of results returned */
+	
 	resultCount: number;
-	/** Query start timestamp */
+	
 	startTime: Date;
-	/** Query end timestamp */
+	
 	endTime: Date;
-	/** Whether query succeeded */
+	
 	success: boolean;
-	/** Error message if failed */
+	
 	errorMessage?: string;
 }
 
-/**
- * Aggregated performance metrics
- */
+
+
+
 export interface QueryMetrics {
-	/** Total number of queries executed */
+	
 	totalQueries: number;
-	/** Success rate as percentage (0-100) */
+	
 	successRate: number;
-	/** 50th percentile latency (median) */
+	
 	p50LatencyMs: number;
-	/** 95th percentile latency */
+	
 	p95LatencyMs: number;
-	/** 99th percentile latency */
+	
 	p99LatencyMs: number;
-	/** Average number of results per query */
+	
 	avgResultCount: number;
-	/** Count of queries exceeding slow threshold */
+	
 	slowQueryCount: number;
 }
 
-/**
- * Slow query aggregation
- */
+
+
+
 export interface SlowQuery {
-	/** Query text */
+	
 	query: string;
-	/** Average execution time across all runs */
+	
 	avgExecutionTimeMs: number;
-	/** Number of times this query was executed */
+	
 	executionCount: number;
-	/** Last execution timestamp */
+	
 	lastExecutedAt: Date;
 }
 
-/**
- * Complete performance summary
- */
+
+
+
 export interface PerformanceSummary {
-	/** Aggregated metrics */
+	
 	metrics: QueryMetrics;
-	/** Slow queries sorted by avg execution time */
+	
 	slowQueries: SlowQuery[];
-	/** Most frequently executed queries */
+	
 	topQueries: Array<{ query: string; count: number }>;
 }
 
-/**
- * Serializable query execution for file storage
- */
+
+
+
 interface SerializedQueryExecution extends Omit<QueryExecution, 'startTime' | 'endTime'> {
 	startTime: string;
 	endTime: string;
 }
 
-/**
- * Options for configuring the QueryPerformanceService
- */
+
+
+
 export interface QueryPerformanceServiceOptions {
-	/** Maximum number of query executions to keep in memory (default: 1000) */
+	
 	maxExecutions?: number;
-	/** File path for persisting metrics (default: 'content/traceql/query-metrics.json') */
+	
 	metricsFilePath?: string;
-	/** Whether to load persisted metrics on creation (default: true) */
+	
 	loadOnCreate?: boolean;
 }
 
-/**
- * Query Performance Monitoring Service
- *
- * Tracks TraceQL query performance with configurable rolling window,
- * file persistence, and percentile calculations.
- *
- * @example
- * ```typescript
- * const service = new QueryPerformanceService({ maxExecutions: 500 });
- * service.recordQueryExecution({
- *   queryHash: QueryPerformanceService.hashQuery('{ span.http.status_code >= 500 }'),
- *   query: '{ span.http.status_code >= 500 }',
- *   executionTimeMs: 1250,
- *   resultCount: 42,
- *   startTime: new Date(),
- *   endTime: new Date(),
- *   success: true
- * });
- *
- * const metrics = service.getMetrics();
- * ```
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export class QueryPerformanceService {
 	private executions: QueryExecution[] = [];
 	private readonly maxExecutions: number;
@@ -147,16 +147,16 @@ export class QueryPerformanceService {
 		}
 	}
 
-	/**
-	 * Record a query execution
-	 *
-	 * @param execution - Query execution metadata
-	 */
+	
+
+
+
+
 	recordQueryExecution(execution: QueryExecution): void {
 		const logger = getLogger();
 		this.executions.push(execution);
 
-		// Maintain rolling window
+		
 		if (this.executions.length > this.maxExecutions) {
 			this.executions.shift();
 		}
@@ -169,19 +169,19 @@ export class QueryPerformanceService {
 		});
 	}
 
-	/**
-	 * Get all recorded executions (for testing/inspection)
-	 */
+	
+
+
 	getExecutions(): ReadonlyArray<QueryExecution> {
 		return this.executions;
 	}
 
-	/**
-	 * Calculate aggregated metrics
-	 *
-	 * @param timeRange - Optional time range filter
-	 * @returns Aggregated performance metrics
-	 */
+	
+
+
+
+
+
 	getMetrics(timeRange?: { start: Date; end: Date }): QueryMetrics {
 		let executions = this.executions;
 
@@ -229,12 +229,12 @@ export class QueryPerformanceService {
 		};
 	}
 
-	/**
-	 * Get slow queries
-	 *
-	 * @param threshold - Execution time threshold in ms (default: 1000ms)
-	 * @returns Array of slow queries sorted by avg execution time
-	 */
+	
+
+
+
+
+
 	getSlowQueries(threshold: number = DEFAULT_SLOW_THRESHOLD_MS): SlowQuery[] {
 		const queryGroups = new Map<string, QueryExecution[]>();
 
@@ -265,11 +265,11 @@ export class QueryPerformanceService {
 		return slowQueries.sort((a, b) => b.avgExecutionTimeMs - a.avgExecutionTimeMs);
 	}
 
-	/**
-	 * Get complete performance summary
-	 *
-	 * @returns Performance summary with metrics, slow queries, and top queries
-	 */
+	
+
+
+
+
 	getSummary(): PerformanceSummary {
 		const metrics = this.getMetrics();
 		const slowQueries = this.getSlowQueries();
@@ -299,11 +299,11 @@ export class QueryPerformanceService {
 		};
 	}
 
-	/**
-	 * Export metrics to file
-	 *
-	 * Saves current executions to disk for persistence across restarts.
-	 */
+	
+
+
+
+
 	exportMetrics(): void {
 		const logger = getLogger();
 
@@ -328,12 +328,12 @@ export class QueryPerformanceService {
 		}
 	}
 
-	/**
-	 * Load metrics from file
-	 *
-	 * Restores persisted executions from disk on startup.
-	 * Silently continues if file does not exist.
-	 */
+	
+
+
+
+
+
 	loadMetrics(): void {
 		const logger = getLogger();
 
@@ -364,13 +364,13 @@ export class QueryPerformanceService {
 		}
 	}
 
-	/**
-	 * Calculate percentile from sorted array using linear interpolation.
-	 *
-	 * @param sortedValues - Array of values sorted ascending
-	 * @param percentile - Percentile to calculate (0-100)
-	 * @returns Percentile value
-	 */
+	
+
+
+
+
+
+
 	calculatePercentile(sortedValues: number[], percentile: number): number {
 		if (sortedValues.length === 0) return 0;
 		if (sortedValues.length === 1) return sortedValues[0];
@@ -383,23 +383,23 @@ export class QueryPerformanceService {
 		return sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight;
 	}
 
-	/**
-	 * Generate MD5 hash for query deduplication
-	 *
-	 * @param query - TraceQL query string
-	 * @returns MD5 hash (hex)
-	 */
+	
+
+
+
+
+
 	static hashQuery(query: string): string {
 		return createHash('md5').update(query).digest('hex');
 	}
 }
 
-/**
- * Create a new QueryPerformanceService instance.
- *
- * @param options - Service configuration options
- * @returns Configured QueryPerformanceService instance
- */
+
+
+
+
+
+
 export function createQueryPerformanceService(
 	options: QueryPerformanceServiceOptions = {}
 ): QueryPerformanceService {

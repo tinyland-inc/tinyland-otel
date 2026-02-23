@@ -1,56 +1,56 @@
-/**
- * Tempo RED Metrics Service
- *
- * Queries Tempo's metrics_generator for Rate/Error/Duration metrics.
- * Tempo automatically derives Prometheus-compatible metrics from traces.
- *
- * **Architecture**:
- * - Tempo ingests traces with spans
- * - metrics_generator component generates RED metrics from span data
- * - Metrics exposed via Prometheus endpoint at :3200/prometheus/api/v1/query
- *
- * **Metrics Available** (from metrics_generator):
- * - traces_spanmetrics_calls_total - Total span count (for Rate)
- * - traces_spanmetrics_duration_bucket - Histogram of span durations (for Duration percentiles)
- * - traces_spanmetrics_size_total - Total span size in bytes
- *
- * @module tempo-red-metrics
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { getLogger } from '../config.js';
 import { getObservabilityConfig } from '../observability-config.js';
 
-/**
- * RED metrics for a specific span/service
- */
+
+
+
 export interface REDMetrics {
-	/** Current request rate (requests per second) */
+	
 	rate: number;
-	/** Historical rate data */
+	
 	rateTimeseries: Array<{ timestamp: number; value: number }>;
 
-	/** Percentage of requests that errored (0-100) */
+	
 	errorRate: number;
-	/** Absolute error count */
+	
 	errorCount: number;
-	/** Total request count */
+	
 	totalCount: number;
-	/** Historical error rate */
+	
 	errorsTimeseries: Array<{ timestamp: number; value: number }>;
 
-	/** Median latency (milliseconds) */
+	
 	p50: number;
-	/** 95th percentile latency (milliseconds) */
+	
 	p95: number;
-	/** 99th percentile latency (milliseconds) */
+	
 	p99: number;
-	/** Historical latency data */
+	
 	durationTimeseries: Array<{ timestamp: number; p50: number; p95: number; p99: number }>;
 }
 
-/**
- * Prometheus query result (simplified)
- */
+
+
+
 interface PrometheusQueryResult {
 	status: string;
 	data: {
@@ -63,17 +63,17 @@ interface PrometheusQueryResult {
 	};
 }
 
-/**
- * Options for configuring the TempoREDMetricsService
- */
+
+
+
 export interface TempoREDMetricsServiceOptions {
-	/** Tempo base URL (default: auto-detected from observability config) */
+	
 	tempoUrl?: string;
 }
 
-/**
- * Service for querying Tempo's metrics_generator RED metrics
- */
+
+
+
 export class TempoREDMetricsService {
 	private tempoUrl: string;
 	private prometheusUrl: string;
@@ -84,23 +84,23 @@ export class TempoREDMetricsService {
 		this.prometheusUrl = `${this.tempoUrl}/prometheus`;
 	}
 
-	/**
-	 * Get RED metrics for fingerprint enrichment spans
-	 *
-	 * @param timeRange - Time range string (e.g., "1h", "24h", "7d")
-	 * @returns RED metrics (rate, error rate, duration percentiles)
-	 */
+	
+
+
+
+
+
 	async getFingerprintREDMetrics(timeRange: string = '1h'): Promise<REDMetrics> {
 		return this.getREDMetrics('fingerprint.enrichment', timeRange);
 	}
 
-	/**
-	 * Get RED metrics for any span name
-	 *
-	 * @param spanName - Span name to query (e.g., "http.request", "fingerprint.enrichment")
-	 * @param timeRange - Time range string (e.g., "1h", "24h", "7d")
-	 * @returns RED metrics
-	 */
+	
+
+
+
+
+
+
 	async getREDMetrics(spanName: string, timeRange: string = '1h'): Promise<REDMetrics> {
 		const logger = getLogger();
 
@@ -152,9 +152,9 @@ export class TempoREDMetricsService {
 		}
 	}
 
-	/**
-	 * Query request rate (requests per second)
-	 */
+	
+
+
 	private async queryRate(
 		spanName: string,
 		start: number,
@@ -170,9 +170,9 @@ export class TempoREDMetricsService {
 		return { current, timeseries };
 	}
 
-	/**
-	 * Query error rate (percentage of failed requests)
-	 */
+	
+
+
 	private async queryErrorRate(
 		spanName: string,
 		start: number,
@@ -221,9 +221,9 @@ export class TempoREDMetricsService {
 		};
 	}
 
-	/**
-	 * Query duration percentile (p50, p95, p99)
-	 */
+	
+
+
 	private async queryDurationPercentile(
 		spanName: string,
 		percentile: number,
@@ -240,9 +240,9 @@ export class TempoREDMetricsService {
 		return { current, timeseries };
 	}
 
-	/**
-	 * Query Prometheus (Tempo's metrics_generator endpoint)
-	 */
+	
+
+
 	async queryPrometheus(
 		query: string,
 		start: number,
@@ -275,9 +275,9 @@ export class TempoREDMetricsService {
 		return (await response.json()) as PrometheusQueryResult;
 	}
 
-	/**
-	 * Extract timeseries from Prometheus result
-	 */
+	
+
+
 	extractTimeseries(
 		result: PrometheusQueryResult
 	): Array<{ timestamp: number; value: number }> {
@@ -307,9 +307,9 @@ export class TempoREDMetricsService {
 		return timeseries;
 	}
 
-	/**
-	 * Combine p50/p95/p99 timeseries into single structure
-	 */
+	
+
+
 	private combineDurationTimeseries(
 		p50: Array<{ timestamp: number; value: number }>,
 		p95: Array<{ timestamp: number; value: number }>,
@@ -329,9 +329,9 @@ export class TempoREDMetricsService {
 		return combined;
 	}
 
-	/**
-	 * Parse time range string to start/end/step
-	 */
+	
+
+
 	parseTimeRange(timeRange: string): { start: number; end: number; step: string } {
 		const end = Math.floor(Date.now() / 1000);
 		let start = end;
@@ -370,12 +370,12 @@ export class TempoREDMetricsService {
 	}
 }
 
-/**
- * Create a new TempoREDMetricsService instance.
- *
- * @param options - Service configuration options
- * @returns Configured TempoREDMetricsService instance
- */
+
+
+
+
+
+
 export function createTempoREDMetricsService(
 	options: TempoREDMetricsServiceOptions = {}
 ): TempoREDMetricsService {

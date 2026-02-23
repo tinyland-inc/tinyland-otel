@@ -1,19 +1,19 @@
-/**
- * Saved Queries Persistence Service (Headless/File-Based)
- *
- * Provides JSON file storage for TraceQL saved queries.
- * Fully headless - no database dependencies (Supabase/Postgres).
- *
- * @module saved-queries
- */
+
+
+
+
+
+
+
+
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { getLogger } from '../config.js';
 
-/**
- * Saved query structure
- */
+
+
+
 export interface SavedQuery {
 	id: string;
 	name: string;
@@ -27,28 +27,28 @@ export interface SavedQuery {
 	tags: string[];
 }
 
-/**
- * Options for configuring the saved queries storage location
- */
+
+
+
 export interface SavedQueriesOptions {
-	/** Directory where saved queries are stored (default: process.cwd()/content/traceql) */
+	
 	storageDir?: string;
-	/** Filename for the saved queries JSON file (default: 'saved-queries.json') */
+	
 	filename?: string;
 }
 
-/**
- * Resolve the file path for saved queries storage
- */
+
+
+
 function resolveFilePath(options: SavedQueriesOptions = {}): string {
 	const dir = options.storageDir ?? join(process.cwd(), 'content', 'traceql');
 	const filename = options.filename ?? 'saved-queries.json';
 	return join(dir, filename);
 }
 
-/**
- * Ensure storage directory and file exist
- */
+
+
+
 function ensureStorageExists(filePath: string): void {
 	const logger = getLogger();
 	const dir = dirname(filePath);
@@ -64,12 +64,12 @@ function ensureStorageExists(filePath: string): void {
 	}
 }
 
-/**
- * Load all saved queries from JSON file
- *
- * @param options - Storage options
- * @returns Array of saved queries (empty array if file does not exist)
- */
+
+
+
+
+
+
 export function loadSavedQueries(options: SavedQueriesOptions = {}): SavedQuery[] {
 	const logger = getLogger();
 	const filePath = resolveFilePath(options);
@@ -94,13 +94,13 @@ export function loadSavedQueries(options: SavedQueriesOptions = {}): SavedQuery[
 	}
 }
 
-/**
- * Save a new query to storage
- *
- * @param query - Query data (without id, createdAt, useCount)
- * @param options - Storage options
- * @returns Saved query with generated ID and metadata
- */
+
+
+
+
+
+
+
 export function saveQuery(
 	query: Omit<SavedQuery, 'id' | 'createdAt' | 'useCount'>,
 	options: SavedQueriesOptions = {}
@@ -137,13 +137,13 @@ export function saveQuery(
 	}
 }
 
-/**
- * Delete a saved query by ID
- *
- * @param queryId - Query ID to delete
- * @param options - Storage options
- * @returns true if deleted, false if not found
- */
+
+
+
+
+
+
+
 export function deleteQuery(queryId: string, options: SavedQueriesOptions = {}): boolean {
 	const logger = getLogger();
 	const filePath = resolveFilePath(options);
@@ -170,12 +170,12 @@ export function deleteQuery(queryId: string, options: SavedQueriesOptions = {}):
 	}
 }
 
-/**
- * Increment use count for a query
- *
- * @param queryId - Query ID to track
- * @param options - Storage options
- */
+
+
+
+
+
+
 export function trackQueryUsage(queryId: string, options: SavedQueriesOptions = {}): void {
 	const logger = getLogger();
 	const filePath = resolveFilePath(options);
@@ -201,17 +201,17 @@ export function trackQueryUsage(queryId: string, options: SavedQueriesOptions = 
 			error: error instanceof Error ? error.message : String(error),
 			queryId,
 		});
-		// Non-critical - do not throw
+		
 	}
 }
 
-/**
- * Get queries by category
- *
- * @param category - Query category
- * @param options - Storage options
- * @returns Filtered queries
- */
+
+
+
+
+
+
+
 export function getQueriesByCategory(
 	category: SavedQuery['category'],
 	options: SavedQueriesOptions = {}
@@ -219,25 +219,25 @@ export function getQueriesByCategory(
 	return loadSavedQueries(options).filter((q) => q.category === category);
 }
 
-/**
- * Get queries by user
- *
- * @param userId - User ID
- * @param options - Storage options
- * @returns Filtered queries
- */
+
+
+
+
+
+
+
 export function getQueriesByUser(userId: string, options: SavedQueriesOptions = {}): SavedQuery[] {
 	return loadSavedQueries(options).filter((q) => q.createdBy === userId);
 }
 
-/**
- * Update an existing query
- *
- * @param queryId - Query ID to update
- * @param updates - Partial query updates
- * @param options - Storage options
- * @returns Updated query or null if not found
- */
+
+
+
+
+
+
+
+
 export function updateQuery(
 	queryId: string,
 	updates: Partial<Omit<SavedQuery, 'id' | 'createdAt' | 'createdBy'>>,

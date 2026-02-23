@@ -1,67 +1,67 @@
-/**
- * OpenTelemetry Node SDK Initialization
- *
- * Server-side OpenTelemetry SDK initialization with:
- * - OTLP HTTP export to Tempo (distributed tracing)
- * - Auto-instrumentation for HTTP, Express, etc.
- * - Pyroscope integration for continuous profiling
- *
- * Architecture:
- * - NodeTracerProvider with OTLP HTTP exporter
- * - Environment-aware endpoints (container vs host)
- * - BatchSpanProcessor for performance
- * - Configurable sampling (100% dev, 10% prod)
- * - Auto-instrumentations for common Node.js libraries
- *
- * @module otel-node
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { trace } from '@opentelemetry/api';
 import { getOtelConfig } from './config.js';
 
-/**
- * Resolve service name from config or environment
- */
+
+
+
 function getServiceName(): string {
 	const config = getOtelConfig();
 	return config.serviceName || process.env.OTEL_SERVICE_NAME || 'sveltekit-server';
 }
 
-/**
- * Resolve service version from config or environment
- */
+
+
+
 function getServiceVersion(): string {
 	const config = getOtelConfig();
 	return config.serviceVersion || process.env.npm_package_version || '1.0.0';
 }
 
-/**
- * Resolve deployment environment from config or environment
- */
+
+
+
 function getDeploymentEnv(): string {
 	const config = getOtelConfig();
 	return config.deploymentEnv || process.env.NODE_ENV || 'development';
 }
 
-/**
- * Determine OTLP endpoint based on config, environment variables, or auto-detection.
- *
- * Priority: config.otlpEndpoint > TEMPO_OTLP_ENDPOINT env > container auto-detect > localhost
- */
+
+
+
+
+
 function getOtlpEndpoint(): string {
 	const config = getOtelConfig();
 
-	// Priority 1: Explicit config
+	
 	if (config.otlpEndpoint) {
 		return config.otlpEndpoint.replace(/\/v1\/(traces|metrics|logs)$/, '');
 	}
 
-	// Priority 2: Environment variable
+	
 	if (process.env.TEMPO_OTLP_ENDPOINT) {
 		return process.env.TEMPO_OTLP_ENDPOINT.replace(/\/v1\/(traces|metrics|logs)$/, '');
 	}
 
-	// Priority 3: Auto-detect container vs host
+	
 	const isContainer = config.isContainer ??
 		(process.env.CONTAINER === 'true' || process.env.DOCKER === 'true');
 	const host = isContainer ? 'stonewall-tempo' : 'localhost';
@@ -70,9 +70,9 @@ function getOtlpEndpoint(): string {
 	return `http://${host}:${port}`;
 }
 
-/**
- * Get trace sampling configuration
- */
+
+
+
 function getSamplingRatio(): number {
 	const config = getOtelConfig();
 	if (config.samplingRatio !== undefined) {
@@ -84,38 +84,38 @@ function getSamplingRatio(): number {
 	return 1.0;
 }
 
-/**
- * Global NodeSDK instance (typed as unknown to avoid requiring sdk-node at import time)
- */
+
+
+
 let sdk: unknown | null = null;
 
-/**
- * Initialize server-side OpenTelemetry tracing
- *
- * Sets up NodeSDK with:
- * - Resource attributes (service name, version, environment)
- * - OTLP HTTP exporter to Tempo
- * - Automatic BatchSpanProcessor configuration
- * - Configurable sampling ratio
- *
- * This function is idempotent (safe to call multiple times).
- *
- * @returns NodeSDK instance (or the existing one if already initialized)
- *
- * @example
- * ```typescript
- * import { configureOtel, initializeServerTracing } from '@tummycrypt/tinyland-otel';
- *
- * configureOtel({
- *   config: {
- *     serviceName: 'my-app',
- *     otlpEndpoint: 'http://tempo:4318',
- *   },
- * });
- *
- * const sdk = initializeServerTracing();
- * ```
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export function initializeServerTracing(): unknown {
 	if (sdk) {
 		return sdk;
@@ -126,11 +126,11 @@ export function initializeServerTracing(): unknown {
 	const serviceVersion = getServiceVersion();
 	const deploymentEnv = getDeploymentEnv();
 	const otlpEndpoint = getOtlpEndpoint();
-	// Sampling ratio retrieved for future use in trace sampler configuration
+	
 	void getSamplingRatio();
 
 	try {
-		// Set environment variables for NodeSDK auto-configuration
+		
 		process.env.OTEL_EXPORTER_OTLP_ENDPOINT = otlpEndpoint;
 		process.env.OTEL_SERVICE_NAME = serviceName;
 		process.env.OTEL_RESOURCE_ATTRIBUTES = `service.version=${serviceVersion},deployment.environment=${deploymentEnv}`;
@@ -141,12 +141,12 @@ export function initializeServerTracing(): unknown {
 		console.log(`[OTel] Environment: ${deploymentEnv}`);
 		console.log(`[OTel] Tempo base endpoint: ${otlpEndpoint}`);
 
-		// Dynamic imports to keep @opentelemetry/sdk-node and auto-instrumentations as optional peer deps
+		
 		const { NodeSDK } = require('@opentelemetry/sdk-node');
 
 		const sdkOptions: Record<string, unknown> = {};
 
-		// Try to load auto-instrumentations (optional)
+		
 		try {
 			const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 			const ignorePatterns = config.ignoreIncomingRequestPatterns || [
@@ -173,7 +173,7 @@ export function initializeServerTracing(): unknown {
 
 		console.log('[OTel] Server-side tracing initialized successfully');
 
-		// Initialize Pyroscope profiling (if configured)
+		
 		initializePyroscope();
 
 		return sdk;
@@ -186,7 +186,7 @@ export function initializeServerTracing(): unknown {
 			sdk = new NodeSDK({});
 			(sdk as { start: () => void }).start();
 		} catch {
-			// sdk-node not available at all
+			
 			sdk = {};
 		}
 
@@ -194,11 +194,11 @@ export function initializeServerTracing(): unknown {
 	}
 }
 
-/**
- * Shutdown tracing (for graceful server shutdown)
- *
- * Flushes any pending spans and closes connections.
- */
+
+
+
+
+
 export async function shutdownServerTracing(): Promise<void> {
 	if (!sdk || typeof (sdk as Record<string, unknown>).shutdown !== 'function') {
 		return;
@@ -215,23 +215,23 @@ export async function shutdownServerTracing(): Promise<void> {
 	}
 }
 
-/**
- * Get the global NodeSDK instance
- */
+
+
+
 export function getNodeSDK(): unknown | null {
 	return sdk;
 }
 
-/**
- * Check if tracing is initialized
- */
+
+
+
 export function isTracingInitialized(): boolean {
 	return sdk !== null;
 }
 
-/**
- * Get tracer instance for manual span creation
- */
+
+
+
 export function getTracer(name?: string, version?: string) {
 	return trace.getTracer(
 		name || getServiceName(),
@@ -239,9 +239,9 @@ export function getTracer(name?: string, version?: string) {
 	);
 }
 
-// ============================================================================
-// Pyroscope integration
-// ============================================================================
+
+
+
 
 let pyroscopeInitialized = false;
 
@@ -297,9 +297,9 @@ async function initializePyroscope(): Promise<void> {
 	}
 }
 
-/**
- * Stop Pyroscope profiling (for graceful shutdown)
- */
+
+
+
 export async function stopPyroscope(): Promise<void> {
 	if (!pyroscopeInitialized) return;
 

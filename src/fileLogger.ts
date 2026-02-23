@@ -1,18 +1,18 @@
-/**
- * File-based Logger for Observability
- *
- * Writes structured JSON logs to files for Alloy collection.
- * Non-blocking, handles errors gracefully.
- *
- * Why files instead of direct Loki client:
- * - Reliable: No network failures blocking requests
- * - Simple: Standard Node.js file operations
- * - Performant: Async writes, no HTTP overhead
- * - Debuggable: Can tail files directly
- * - Platform-agnostic: Works on all platforms (unlike journal on macOS)
- *
- * @module fileLogger
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import { appendFile } from 'fs/promises';
 import { existsSync, mkdirSync } from 'fs';
@@ -20,9 +20,9 @@ import { join } from 'path';
 import type { BaseLogEntry, FileLogLevel } from './types.js';
 import { getOtelConfig } from './config.js';
 
-/**
- * Resolve the log directory from config or environment
- */
+
+
+
 function getLogDir(): string {
 	const config = getOtelConfig();
 	if (config.logDir) return config.logDir;
@@ -46,10 +46,10 @@ function ensureLogDir(): void {
 	}
 }
 
-/**
- * Write a structured log entry to file
- * Non-blocking, catches and logs errors to console as fallback
- */
+
+
+
+
 export async function writeLog(entry: BaseLogEntry): Promise<void> {
 	ensureLogDir();
 	try {
@@ -67,9 +67,9 @@ export async function writeLog(entry: BaseLogEntry): Promise<void> {
 	}
 }
 
-/**
- * Convenience methods for different log levels
- */
+
+
+
 export const fileLogger = {
 	debug: (message: string, data?: Record<string, unknown>) =>
 		writeLog({ level: 'debug' as FileLogLevel, message, timestamp: Date.now(), ...data }),
@@ -86,9 +86,9 @@ export const fileLogger = {
 	write: writeLog
 };
 
-/**
- * Analytics page view logging helper
- */
+
+
+
 export async function logPageView(data: {
 	path: string;
 	sessionId?: string;
@@ -115,9 +115,9 @@ export async function logPageView(data: {
 	});
 }
 
-/**
- * A11y-specific logging helper
- */
+
+
+
 export async function logA11yViolation(url: string, violation: {
 	impact?: string;
 	id?: string;
@@ -142,9 +142,9 @@ export async function logA11yViolation(url: string, violation: {
 	});
 }
 
-/**
- * Metrics logging helper
- */
+
+
+
 export async function logMetrics(sessionId: string, metrics: unknown): Promise<void> {
 	await writeLog({
 		level: 'info',
@@ -155,9 +155,9 @@ export async function logMetrics(sessionId: string, metrics: unknown): Promise<v
 	});
 }
 
-/**
- * Theme state logging helper
- */
+
+
+
 export async function logThemeState(sessionId: string, state: unknown): Promise<void> {
 	await writeLog({
 		level: 'debug',
@@ -168,9 +168,9 @@ export async function logThemeState(sessionId: string, state: unknown): Promise<
 	});
 }
 
-/**
- * Heartbeat logging helper
- */
+
+
+
 export async function logHeartbeat(sessionId: string, activeTab: boolean): Promise<void> {
 	await writeLog({
 		level: 'debug',
@@ -181,9 +181,9 @@ export async function logHeartbeat(sessionId: string, activeTab: boolean): Promi
 	});
 }
 
-/**
- * Discord access logging helper
- */
+
+
+
 export async function logDiscordAccess(data: {
 	clientIp: string;
 	passed: boolean;

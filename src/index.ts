@@ -1,42 +1,42 @@
-/**
- * @tummycrypt/tinyland-otel
- *
- * OpenTelemetry instrumentation layer for the Tinyland.dev platform.
- * Provides tracer factory, span helpers, TraceQL query builder,
- * RED metrics generators, observability stack config, and file-based logging.
- *
- * Usage:
- * ```typescript
- * import { configureOtel, initializeServerTracing, getServerTracer, createSpan } from '@tummycrypt/tinyland-otel';
- *
- * // Initialize once at startup
- * configureOtel({
- *   config: {
- *     serviceName: 'my-service',
- *     serviceVersion: '1.0.0',
- *     otlpEndpoint: 'http://tempo:4318',
- *   },
- *   logger: myStructuredLogger,
- * });
- *
- * // Start the SDK
- * initializeServerTracing();
- *
- * // Create spans
- * const tracer = getServerTracer();
- * await createSpan('my-operation', async (span) => {
- *   span.setAttribute('key', 'value');
- *   return doWork();
- * });
- * ```
- *
- * @module @tummycrypt/tinyland-otel
- */
 
-// Configuration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export { configureOtel, getOtelConfig, getLogger, resetOtelConfig } from './config.js';
 
-// Types
+
 export type {
 	OtelConfig,
 	OtelLogger,
@@ -59,7 +59,7 @@ export type {
 	SpanAttribute,
 } from './types.js';
 
-// OTel Node SDK initialization
+
 export {
 	initializeServerTracing,
 	shutdownServerTracing,
@@ -69,7 +69,7 @@ export {
 	stopPyroscope,
 } from './otel-node.js';
 
-// Tracer factory
+
 export {
 	DEFAULT_TRACER_SCOPE,
 	DEFAULT_TRACER_VERSION,
@@ -79,7 +79,7 @@ export {
 	getGlobalTracer,
 } from './tracers.js';
 
-// Instrumentation helpers
+
 export {
 	getTracer as getInstrumentationTracer,
 	initializeTracing,
@@ -94,7 +94,7 @@ export {
 } from './instrumentation.js';
 export type { Span, Tracer } from './instrumentation.js';
 
-// RED Metrics (PromQL query builders)
+
 export type { RedMetricsConfig, SloThresholds } from './span-metrics.js';
 export {
 	DEFAULT_SLO,
@@ -114,7 +114,7 @@ export {
 	violatesSlo,
 } from './span-metrics.js';
 
-// TraceQL query builder
+
 export type {
 	TraceQLOperator,
 	RiskTier,
@@ -127,7 +127,7 @@ export type {
 } from './traceql.js';
 export { TraceQL } from './traceql.js';
 
-// TraceQL templates
+
 export type { TemplateVariable, TraceQLTemplate } from './traceql-templates.js';
 export {
 	TRACEQL_TEMPLATES,
@@ -139,7 +139,7 @@ export {
 	validateTemplateVariables,
 } from './traceql-templates.js';
 
-// File-based logger
+
 export {
 	writeLog,
 	fileLogger,
@@ -151,14 +151,14 @@ export {
 	logDiscordAccess,
 } from './fileLogger.js';
 
-// Observability stack config
+
 export {
 	buildObservabilityConfig,
 	getObservabilityConfig,
 	checkObservabilityHealth,
 } from './observability-config.js';
 
-// Tempo Query Services
+
 export type { TempoQueryServiceOptions } from './services/tempo-query.js';
 export { TempoQueryService, createTempoQueryService } from './services/tempo-query.js';
 
@@ -180,7 +180,7 @@ export {
 	createQueryPerformanceService,
 } from './services/query-performance.js';
 
-// Saved Queries
+
 export type { SavedQuery, SavedQueriesOptions } from './persistence/saved-queries.js';
 export {
 	loadSavedQueries,

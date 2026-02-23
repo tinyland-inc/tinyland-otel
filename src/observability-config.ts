@@ -1,12 +1,12 @@
-/**
- * Observability Stack Configuration
- *
- * Central configuration for the LGTM+P observability stack.
- * Replaces the SvelteKit-specific config/observability.ts with
- * a config-injectable version.
- *
- * @module observability-config
- */
+
+
+
+
+
+
+
+
+
 
 import type {
 	ObservabilityStackConfig,
@@ -17,10 +17,10 @@ import type {
 	TempoEndpointConfig
 } from './types.js';
 
-/**
- * Build the default observability stack configuration.
- * Prefers environment variables, falls back to container or localhost defaults.
- */
+
+
+
+
 export function buildObservabilityConfig(overrides?: Partial<ObservabilityStackConfig>): ObservabilityStackConfig {
 	const isDev = process.env.NODE_ENV === 'development';
 
@@ -52,10 +52,10 @@ export function buildObservabilityConfig(overrides?: Partial<ObservabilityStackC
 	return config;
 }
 
-/**
- * Get the full observability config with auth credentials.
- * Mirrors the original getObservabilityConfig() API.
- */
+
+
+
+
 export function getObservabilityConfig(overrides?: Partial<ObservabilityStackConfig>) {
 	const config = buildObservabilityConfig(overrides);
 	return {
@@ -77,9 +77,9 @@ export function getObservabilityConfig(overrides?: Partial<ObservabilityStackCon
 	};
 }
 
-/**
- * Check health of observability stack services
- */
+
+
+
 export async function checkObservabilityHealth(
 	overrides?: Partial<ObservabilityStackConfig>
 ): Promise<ObservabilityHealth> {

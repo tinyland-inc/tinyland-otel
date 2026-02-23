@@ -1,65 +1,65 @@
-/**
- * Type-safe TraceQL Query Builder
- *
- * Provides static methods for constructing TraceQL queries against OpenTelemetry spans
- * stored in Grafana Tempo. All queries use real span attributes.
- *
- * @see https://grafana.com/docs/tempo/latest/traceql/
- * @module traceql
- */
 
-/**
- * TraceQL operator types for combining queries
- */
+
+
+
+
+
+
+
+
+
+
+
+
 export type TraceQLOperator = 'AND' | 'OR';
 
-/**
- * Risk tier enumeration (matches span.risk.tier attribute values)
- */
+
+
+
 export type RiskTier = 'low' | 'medium' | 'high' | 'critical';
 
-/**
- * A11y violation severity levels
- */
+
+
+
 export type A11ySeverity = 'critical' | 'serious' | 'moderate' | 'minor';
 
-/**
- * tRPC procedure types
- */
+
+
+
 export type TRPCType = 'query' | 'mutation';
 
-/**
- * Device type classification
- */
+
+
+
 export type DeviceType = 'mobile' | 'tablet' | 'desktop' | 'unknown';
 
-/**
- * GeoIP lookup methods
- */
+
+
+
 export type GeoIPMethod = 'browser-geolocation' | 'maxmind-geoip' | 'mock-development';
 
-/**
- * VPN confidence levels
- */
+
+
+
 export type VPNConfidence = 'high' | 'medium' | 'low';
 
-/**
- * Fingerprint event types
- */
+
+
+
 export type FingerprintEventType =
 	| 'session_created'
 	| 'session_validated'
 	| 'fingerprint_mismatch'
 	| 'fingerprint_stored';
 
-/**
- * TraceQL Query Builder
- *
- * Static utility class for building type-safe TraceQL queries.
- * All methods return valid TraceQL query strings that can be sent to Grafana Tempo.
- */
+
+
+
+
+
+
 export class TraceQL {
-	// ==================== BASIC FILTERING ====================
+	
 
 	static findSpansByName(
 		name: string,
@@ -101,7 +101,7 @@ export class TraceQL {
 		return `{ span.user.id="${userId}" }`;
 	}
 
-	// ==================== PERFORMANCE QUERIES ====================
+	
 
 	static findSlowSpans(minDuration: string, spanType?: string): string {
 		const typeFilter = spanType ? ` && name=~"${spanType}\\\\..*"` : '';
@@ -121,7 +121,7 @@ export class TraceQL {
 		return `{ span.duration_ms > ${minDurationMs} && kind="client" }`;
 	}
 
-	// ==================== SECURITY QUERIES ====================
+	
 
 	static findHighRiskSessions(minTier: RiskTier = 'high'): string {
 		if (minTier === 'critical') {
@@ -155,7 +155,7 @@ export class TraceQL {
 		return `{ span.enrichment.severity="critical" }`;
 	}
 
-	// ==================== ACCESSIBILITY QUERIES ====================
+	
 
 	static findA11yViolations(severity?: A11ySeverity): string {
 		if (severity === 'critical') {
@@ -186,7 +186,7 @@ export class TraceQL {
 		return `{ span.a11y.ingestion_success=false }`;
 	}
 
-	// ==================== tRPC QUERIES ====================
+	
 
 	static findSlowMutations(threshold: string): string {
 		return `{ span.trpc.type="mutation" && duration > ${threshold} }`;
@@ -205,7 +205,7 @@ export class TraceQL {
 		return `{ span.trpc.type="${type}" }`;
 	}
 
-	// ==================== GEOGRAPHIC QUERIES ====================
+	
 
 	static findRequestsByCountry(country: string): string {
 		return `{ span.geo.country="${country}" }`;
@@ -232,7 +232,7 @@ export class TraceQL {
 		return `{ span.geo.lookup_result="not_found" }`;
 	}
 
-	// ==================== DEVICE & BROWSER QUERIES ====================
+	
 
 	static findRequestsByDevice(deviceType: DeviceType): string {
 		return `{ span.device.type="${deviceType}" }`;
@@ -246,7 +246,7 @@ export class TraceQL {
 		return `{ span.client.os=~".*${osPattern}.*" }`;
 	}
 
-	// ==================== ADVANCED QUERIES ====================
+	
 
 	static buildCustomQuery(
 		filters: Record<string, string | number | boolean>,
