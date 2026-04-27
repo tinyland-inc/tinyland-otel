@@ -139,6 +139,22 @@ export {
 	validateTemplateVariables,
 } from './traceql-templates.js';
 
+export type {
+	TraceQLSpan,
+	TraceQLSpanSet,
+	TraceQLTrace,
+	TraceQLResult,
+	BatchQueryItemResult,
+	BatchQueryResult,
+} from './traceql-query.js';
+export {
+	queryTraceQL,
+	queryTracesByFingerprint,
+	queryTracesBySession,
+	queryTracesByStatusCode,
+	queryTraceQLBatch,
+} from './traceql-query.js';
+
 
 export {
 	writeLog,
