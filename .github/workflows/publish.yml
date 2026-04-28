@@ -33,7 +33,7 @@ jobs:
       bazel_targets: "//:pkg //:test"
       package_dir: ./bazel-bin/pkg
       npm_access: public
-      github_package_name: "@tummycrypt/tinyland-otel"
+      github_package_name: "@tinyland-inc/tinyland-otel"
       dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
